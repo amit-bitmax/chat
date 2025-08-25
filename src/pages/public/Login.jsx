@@ -12,10 +12,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import {
   EmailOutlined, LockOutlined, Visibility, VisibilityOff
 } from '@mui/icons-material';
-import { useLoginUserMutation } from '../features/auth/authApi';
-import { connectSocket } from '../socket/socket';
 
-import IM1 from '../assets/images/photo-1.avif';
+import { useLoginUserMutation } from '../../features/auth/authApi';
+import { connectSocket } from '../../sockets/sockets';
 
 const Login = () => {
   const theme = useTheme();
@@ -114,7 +113,7 @@ const Login = () => {
           position:'relative',
           height: '100vh',
           width: '100vw',
-          backgroundImage: `url(${IM1})`,
+          // backgroundImage: `url(${IM1})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
