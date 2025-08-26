@@ -85,7 +85,7 @@ console.log("role",role);
               >
                 <Avatar
                   alt={data?.data?.first_name}
-                  src={`http://localhost:5003/uploads/profile/${data?.data?.profileImage}`}
+                  src={`https://chatcrmapi.onrender.com/uploads/profile/${data?.data?.profileImage}`}
                   sx={{ height: "30px", width: "30px" }}
                 />
               </StyledBadge>

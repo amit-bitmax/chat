@@ -16,6 +16,7 @@ import {
 import { useLoginUserMutation } from '../../features/auth/authApi';
 import { connectSocket } from '../../sockets/sockets';
 
+import VD1 from '../../assets/videos/SecureLogin.mp4';
 const Login = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -114,8 +115,9 @@ const Login = () => {
           height: '100vh',
           width: '100vw',
           // backgroundImage: `url(${IM1})`,
+          background: 'linear-gradient(rgba(255, 255, 255, 1), rgba(254, 253, 253, 0.3)), url(${IM1})',
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          // backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           display: 'flex',
           alignItems: 'center',
@@ -123,7 +125,7 @@ const Login = () => {
           
         }}
       >
-        <Box
+        {/* <Box
           sx={{
             position: 'absolute',
             top: 0,
@@ -133,16 +135,25 @@ const Login = () => {
             background: 'rgba(0, 0, 0, 0.1)', 
             zIndex: 1,
           }}
-        />
+        /> */}
         <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Grid container justifyContent="center">
+          <Grid container justifyContent="left">
             <Grid size={{xs:12}}>
               <Card
                 elevation={0}
                 sx={{
                   borderRadius: 2,
                   backdropFilter: 'blur(10px)',
-                  background: 'transparent',
+                  // background: 'transparent',
+                  //  backgroundImage: `url(${IM1})`,
+                  background: 'linear-gradient(rgba(255, 126, 90, 1.00), rgba(239, 120, 60, 0.3)), url(${})',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  width: '100%',
+                  // marginLeft: '10px',
+                  marginRight: '20px',
+                  maxWidth: '400px',
                 }}
               >
                 <Box  sx={{ width: '100%', }}>
@@ -174,6 +185,30 @@ const Login = () => {
             </Grid>
           </Grid>
          </Box>
+          <Box sx={{
+            // position: 'absolute',
+            bottom: 0,
+            right: 0,
+            zIndex: 1
+          }}>
+             <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: 'relative',
+          bottom: 0,
+          right: -150,
+          width: '100vh',
+         height: '90vh',
+          zIndex: 1,
+          objectFit: 'cover'
+        }}
+      >
+        <source src={VD1} type="video/mp4" />
+      </video>
+          </Box>
       </Box>
     </>
   );

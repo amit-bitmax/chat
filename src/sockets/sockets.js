@@ -5,7 +5,7 @@ let socket;
 
 export const connectSocket = ({ token, id }) => {
   if (!socket) {
-    socket = io('http://localhost:5003', {
+    socket = io('https://chatcrmapi.onrender.com', {
       query: {
         token,
         userId: id,
