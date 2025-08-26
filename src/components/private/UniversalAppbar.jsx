@@ -102,7 +102,7 @@ console.log("role",role);
           flexGrow: 1,
           p: 2,
           pt: 8,
-          backgroundImage: "linear-gradient(135deg, rgba(247, 251, 248, 0.74), rgba(222,118,49,0.3), rgba(43,57,119,0.3), rgba(121,40,119,0.7))",
+          // backgroundImage: "linear-gradient(135deg, rgba(247, 251, 248, 0.74), rgba(222,118,49,0.3), rgba(43,57,119,0.3), rgba(121,40,119,0.7))",
           backdropFilter: "blur(10px)",
           height:'100vh',
           width: open ? `calc(99.2vw - ${drawerWidth}px)` : "94.2vw",

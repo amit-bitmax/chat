@@ -86,7 +86,7 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
     };
 
     const renderMenuItems = (items, level = 0) => {
-        return items.map((item) => {
+        return items?.map((item) => {
             const isOpen = openMenus[`${level}-${item.name}`];
             const isActive = activeItem === item.name;
             return (
@@ -98,6 +98,7 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
                                 background: isActive ?  ' #455a64':'none' ,
                                 borderRadius: '50px',
                                 height: '20px',
+                                ml:0.5,
                                 width: '5px',
                             }}
                         />
@@ -105,8 +106,9 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
                         <Box
                             sx={{
                                 my: 0.2,
+                                mr:1,
                                 background: isActive ? 'rgba(255, 255, 255, 0.68)' : 'none',
-                                borderRadius: '5px 50px 50px 5px',
+                                borderRadius: '5px 5px 5px 5px',
                                 width: '100%',
                             }}
                         >

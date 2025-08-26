@@ -8,6 +8,7 @@ import AdminDashboard from "../pages/private/admin/AdminDashboard";
 import AgentDashboard from "../pages/private/agent/AgentDashboard";
 import QaDashboard from "../pages/private/qa/QaDashboard";
 import Home from "../pages/private/customer/Home";
+import CustomerRouter from "./router/CustomerRouter";
 
 const routers = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ const routers = createBrowserRouter([
   },
   {
     path: "/customer",
-    element: <ProtectedRouter allowedRoles={["Customer"]} />,
+    element: <CustomerRouter allowedRoles={["Customer"]} />,
     children: [{ path: "", index: true, element: <Home /> }],
   },
 ]);
