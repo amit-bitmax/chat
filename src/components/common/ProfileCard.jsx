@@ -18,7 +18,7 @@ import { useToggleBreakMutation } from '../../features/auth/authApi'; // ✅ Imp
 import { format } from 'date-fns';
 import StyledBadge from './StyledBadge';
 
-const IMG_BASE_URL = 'http://localhost:5003/uploads/profile';
+const IMG_BASE_URL = 'https://chatcrmapi.onrender.com/uploads/profile';
 
 const ProfileCard = ({ agent, onToggle }) => {
   const navigate = useNavigate();
