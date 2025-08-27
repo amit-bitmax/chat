@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import {  Box, Collapse, Typography, IconButton, Divider, List, ListItem, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight,  ExpandMore } from '@mui/icons-material';
 
 import { menuData } from './menuData';
@@ -61,7 +61,6 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
     const navigate = useNavigate();
     const [openMenus, setOpenMenus] = useState({});
     const [activeItem, setActiveItem] = useState(null);
-
     const handleToggle = (menuName, level) => {
         setOpenMenus((prev) => {
             const newState = { ...prev };
@@ -88,6 +87,7 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
     const renderMenuItems = (items, level = 0) => {
         return items?.map((item) => {
             const isOpen = openMenus[`${level}-${item.name}`];
+            console.log("is routes",item?.route);
             const isActive = activeItem === item.name;
             return (
                 <React.Fragment key={item.name}>
@@ -118,12 +118,12 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
                                     color: isActive ? '#455a64' : '#333',
                                 }}
                                 onClick={() => {
-                                    if (item.route) {
-                                        navigate(item.route);
-                                        setActiveItem(item.name);
+                                    if (item?.route) {
+                                       navigate(`/agent/${item?.route}`);
+                                        setActiveItem(item?.name);
                                     }
                                     if (item.subMenu || item.nestedSubMenu) {
-                                        handleToggle(item.name, level);
+                                        handleToggle(item?.name, level);
                                     }
                                 }}
                             >

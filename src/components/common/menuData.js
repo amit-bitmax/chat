@@ -1,12 +1,12 @@
-import { Forum, Home, Inbox, Pages, PeopleAlt, SignalCellularAlt } from "@mui/icons-material";
+import { Forum, Home, Inbox, PeopleAlt, SignalCellularAlt } from "@mui/icons-material";
 
 export const menuData = {
     Admin:[
         {
-        label: "Navigation",
+        label: "Main",
         items: [
             {
-                name: "dashboard", icon: Home,route: "dashboard",
+                name: "dashboard", icon: Home,route: "/dashboard",
             },
              {
                 name: "Analytics", icon: SignalCellularAlt,
@@ -16,12 +16,6 @@ export const menuData = {
             },
             {
                 name: "Chat", icon: Forum,route:"chat",
-            },
-            {
-                name: "ChatDemo", icon: Forum,route:"chatdemo",
-            },
-            {
-                name: "NewChat", icon: Forum,route:"newchat",
             },
             {
                 name: "Inbox", icon: Inbox,route:"inbox",
@@ -47,54 +41,38 @@ export const menuData = {
     }],
     Agent:[
         {
-        label: "Navigation",
+        label: "Main",
         items: [
             {
                 name: "dashboard", icon: Home,route: "dashboard",
             },
-             {
-                name: "Analytics", icon: SignalCellularAlt,
-                subMenu: [
-                    { name: "Customers", route: "analytics/customers" },
-                ]
-            },
+            //  {
+            //     name: "Analytics", icon: SignalCellularAlt,
+            //     subMenu: [
+            //         { name: "Customers", route: "analytics/customers" },
+            //     ]
+            // },
             {
                 name: "Chat", icon: Forum,route:"chat",
             },
-            {
-                name: "ChatDemo", icon: Forum,route:"chatdemo",
-            },
-            {
-                name: "NewChat", icon: Forum,route:"newchat",
-            },
-            {
-                name: "Inbox", icon: Inbox,route:"inbox",
-            },
-
-            {
-                name: "Team", icon: PeopleAlt,route:"team",
-            },
-            {
-                 name: "Reports", icon: SignalCellularAlt,
-                subMenu: [
-                    {
-                        name: "Agents",
-                        nestedSubMenu: [
-                            { name: "Agents performance", route: "reports/performance" },
-                            { name: "Agent activity", route: "reports/activity" },
-                        ],
-                    },
-                ]
-            }
-
+            // {
+            //     name: "Inbox", icon: Inbox,route:"inbox",
+            // },
+            // {
+            //     name: "Reports", icon: SignalCellularAlt,
+            //     subMenu: [
+            //         { name: "Performance", route: "reports/performance" },
+            //         { name: "Activity", route: "reports/activity" },
+            //     ]
+            // }
         ]
     }],
     QA:[
         {
-        label: "Navigation",
+        label: "Main",
         items: [
             {
-                name: "dashboard", icon: Home,route: "dashboard",
+                name: "dashboard", icon: Home,route: "/dashboard",
             },
              {
                 name: "Analytics", icon: SignalCellularAlt,
@@ -106,31 +84,11 @@ export const menuData = {
                 name: "Chat", icon: Forum,route:"chat",
             },
             {
-                name: "ChatDemo", icon: Forum,route:"chatdemo",
-            },
-            {
-                name: "NewChat", icon: Forum,route:"newchat",
-            },
-            {
                 name: "Inbox", icon: Inbox,route:"inbox",
             },
-
             {
                 name: "Team", icon: PeopleAlt,route:"team",
             },
-            {
-                 name: "Reports", icon: SignalCellularAlt,
-                subMenu: [
-                    {
-                        name: "Agents",
-                        nestedSubMenu: [
-                            { name: "Agents performance", route: "reports/performance" },
-                            { name: "Agent activity", route: "reports/activity" },
-                        ],
-                    },
-                ]
-            }
-
         ]
     }],
     Customer: [

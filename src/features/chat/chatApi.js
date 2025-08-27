@@ -48,3 +48,4 @@ export const chatApi = createApi({
 });
 
 export const {useGetAllCustomerQuery, useSendMessageMutation, useGetConversationQuery , useReplyToPetitionMutation,useTransferPetitionMutation } = chatApi;
+

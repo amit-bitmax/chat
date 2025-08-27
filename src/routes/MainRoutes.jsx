@@ -1,15 +1,36 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import Chat from "../main/chat/Chat";
 
-import PublicRouter from "./router/PublicRouter";
-import ProtectedRouter from "./router/ProtectedRouter";
+// ✅ Lazy load pages
+const Login = lazy(() => import("../pages/public/Login"));
+const AdminDashboard = lazy(() => import("../pages/private/admin/AdminDashboard"));
+const AgentDashboard = lazy(() => import("../pages/private/agent/Dashboard"));
+const QaDashboard = lazy(() => import("../pages/private/qa/QaDashboard"));
+const Home = lazy(() => import("../pages/private/customer/Home"));
 
-import Login from "../pages/public/Login";
-import AdminDashboard from "../pages/private/admin/AdminDashboard";
-import AgentDashboard from "../pages/private/agent/AgentDashboard";
-import QaDashboard from "../pages/private/qa/QaDashboard";
-import Home from "../pages/private/customer/Home";
-import CustomerRouter from "./router/CustomerRouter";
+// ✅ Lazy load routers
+const PublicRouter = lazy(() => import("./router/PublicRouter"));
+const ProtectedRouter = lazy(() => import("./router/ProtectedRouter"));
+const CustomerRouter = lazy(() => import("./router/CustomerRouter"));
 
+// ✅ Route children configs
+const adminChildren = [{ path: "", index: true, element: <AdminDashboard /> }];
+const qaChildren = [
+  { path: "", index: true, element: <QaDashboard /> },
+
+];
+const agentChildren = [
+  {path:"dashboard", index: true, element: <AgentDashboard /> },
+  { path: "chat", element: <Chat /> }, 
+  // { path: "inbox", element: <Inbox /> },
+  // { path: "analytics/customers", element: <Customers /> }, 
+  // { path: "reports/performance", element: <Performance /> }, 
+  // { path: "reports/activity", element: <Activity /> }, 
+];
+const customerChildren = [{ path: "", index: true, element: <Home /> }];
+
+// ✅ Main Router
 const routers = createBrowserRouter([
   {
     path: "/login",
@@ -18,26 +39,46 @@ const routers = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <ProtectedRouter allowedRoles={["Admin"]} />,
-    children: [{ path: "", index: true, element: <AdminDashboard /> }],
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRouter allowedRoles={["Admin"]} />
+      </Suspense>
+    ),
+    children: adminChildren,
   },
   {
     path: "/qa",
-    element: <ProtectedRouter allowedRoles={["QA"]} />,
-    children: [{ path: "", index: true, element: <QaDashboard /> }],
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRouter allowedRoles={["QA"]} />
+      </Suspense>
+    ),
+    children: qaChildren,
   },
   {
     path: "/agent",
-    element: <ProtectedRouter allowedRoles={["Agent"]} />,
-    children: [{ path: "", index: true, element: <AgentDashboard /> }],
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRouter allowedRoles={["Agent"]} />
+      </Suspense>
+    ),
+    children: agentChildren,
   },
   {
     path: "/customer",
-    element: <CustomerRouter allowedRoles={["Customer"]} />,
-    children: [{ path: "", index: true, element: <Home /> }],
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <CustomerRouter allowedRoles={["Customer"]} />
+      </Suspense>
+    ),
+    children: customerChildren,
   },
 ]);
 
 export default function MainRoutes() {
-  return <RouterProvider router={routers} />;
+  return (
+    <Suspense fallback={<div>Loading app...</div>}>
+      <RouterProvider router={routers} />
+    </Suspense>
+  );
 }

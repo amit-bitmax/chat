@@ -9,7 +9,8 @@ export const authApi = createApi({
       const token = localStorage.getItem('token');
       if (token) headers.set('Authorization', `Bearer ${token}`);
       return headers;
-    }
+    },
+    tagTypes: ["User"],
   }),
   endpoints: (builder) => ({
     registerUser: builder.mutation({
@@ -43,7 +44,11 @@ export const authApi = createApi({
       }),
     }),
     getAllAgents: builder.query({
-      query: () => '/all-user',
+      query: () => '/',
+    }),
+    getAllCustomer: builder.query({
+      query: () => '/customers',
+      providesTags: ["User"],
     }),
     requestOtp: builder.mutation({
       query: (data) => ({
@@ -70,6 +75,7 @@ export const authApi = createApi({
 
 export const {
   useRegisterUserMutation,
+  useGetAllCustomerQuery,
   useLoginUserMutation,
   useGetProfileQuery,
   useUpdateProfileMutation,
