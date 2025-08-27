@@ -34,6 +34,9 @@ export const chatApi = createApi({
         { type: 'Chat', id: petitionId }
       ],
     }),
+    getAllCustomer: builder.query({
+      query: () => '/all'
+    }),
     transferPetition: builder.mutation({
       query: ({ petitionId, newAgentId }) => ({
         url: `/${petitionId}/petition-transfer`,
@@ -44,4 +47,5 @@ export const chatApi = createApi({
   })
 });
 
-export const {useSendMessageMutation, useGetConversationQuery , useReplyToPetitionMutation,useTransferPetitionMutation } = chatApi;
+export const {useGetAllCustomerQuery, useSendMessageMutation, useGetConversationQuery , useReplyToPetitionMutation,useTransferPetitionMutation } = chatApi;
+
