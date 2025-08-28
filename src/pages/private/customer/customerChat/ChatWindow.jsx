@@ -55,7 +55,7 @@ export default function ChatWindow() {
         mx: "auto",
         display: "flex",
         flexDirection: "column",
-        height: 408,
+        height: 300,
         // backdropFilter: "blur(10px)",
       }}
       elevation={4}

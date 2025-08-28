@@ -3,11 +3,9 @@ import renderTime from "../../utils/renderTime";
 // import ChatReply from "../../components/common/public/ChatReply";
 
 const ChatMessage = ({ msg, selectedUser }) => {
-    console.log("msg", msg?.from);
     const isFrom = msg?.from === selectedUser?._id;
     const isTo = msg?.to === selectedUser?._id;
-    console.log("isFrom", selectedUser?._id, isFrom);
-    return (
+        return (
       <Box mb={1} display="flex" justifyContent={isFrom ? "flex-start" : "flex-end"}>
         <Stack direction="row" sx={{ flexDirection: isFrom ? "row" : "row-reverse" }}>
           <Box

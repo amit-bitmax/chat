@@ -1,128 +1,147 @@
-import React, { useEffect, useState } from "react";
-// import {
-//   initSocket,
-//   joinUserRoom,
-//   onIncomingCall,
-//   sendAnswer,
-//   onIceCandidate,
-// } from "../../sockets/callSocket";
-// import {
-//   initPeerConnection,
-//   getMediaStream,
-//   addTracks,
-//   createAnswer,
-//   setRemoteDescription,
-//   addIceCandidate,
-//   setIceCandidateCallback,
-// } from "../../utils/webrtc";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  initSocket,
+  joinUserRoom,
+  onIncomingCall,
+  sendAnswer,
+  onIceCandidate,
+} from "../../../sockets/callSocket";
 
-// import { useUpdateCallStatusMutation } from "../../features/room/roomApi";
-// import IncomingCallDialog from "./IncomingCallModal";
 import VideoCallModal from "../../../components/common/VideoCallModal";
+import IncomingCallDialog from "../../../components/common/IncomingCallModal"; // make sure this exists
 import { jwtDecode } from "jwt-decode";
+import IncomingCallModal from "../../../components/common/IncomingCallModal";
 
 const CustomerDashboard = () => {
-   const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
   const customerId = decoded?.id;
-//   const [incomingCall, setIncomingCall] = useState(null);
+
+  const [incomingCall, setIncomingCall] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
-//   const [localStream, setLocalStream] = useState(null);
-//   const [remoteStream, setRemoteStream] = useState(null);
-//   const [roomId, setRoomId] = useState(null);
-//   const localVideoRef = React.createRef();
-// const remoteVideoRef = React.createRef();
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [roomId, setRoomId] = useState(null);
 
-//   const [updateCallStatus] = useUpdateCallStatusMutation();
+  const pcRef = useRef(null);
+  const socketRef = useRef(null);
 
-//   useEffect(() => {
-//     const socket = initSocket();
-//     joinUserRoom(customerId);
 
-//     onIncomingCall(async ({ roomId, offer, fromUserId }) => {
-//       setIncomingCall({ roomId, offer, fromUserId });
-//     });
+  useEffect(() => {
+    socketRef.current = initSocket();
+    // joinUserRoom(customerId);
+    console.log("Socket initialized for customer:", joinUserRoom(customerId));
 
-//     onIceCandidate(async (candidate) => {
-//       await addIceCandidate(candidate);
-//     });
+    // 📞 incoming call from agent
+    onIncomingCall( ({ roomId, offer, fromUserId }) => {
+      console.log("📥 Incoming call from agent:", fromUserId);
+      setIncomingCall({ roomId, offer, fromUserId });
+      console.log("📡incoming ",incomingCall, roomId, offer, fromUserId)
+    });
 
-//     setIceCandidateCallback((candidate) => {
-//       if (roomId) {
-//         socket.emit("ice-candidate", { roomId, candidate });
-//       }
-//     });
-//   }, [roomId]);
+    // 📡 ICE candidates from agent
+    onIceCandidate(async (candidate) => {
+      console.log("📡 Received ICE candidate from agent");
+      if (pcRef.current) {
+        await pcRef.current.addIceCandidate(candidate);
+      }
+    });
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, [customerId]);
 
-//   const handleAccept = async () => {
-//     if (!incomingCall) return;
+  // ✅ Accept call
+ const handleAccept = async () => {
+  if (!incomingCall) return;
+  const { roomId, offer } = incomingCall;
 
-//     const { roomId, offer, fromUserId } = incomingCall;
-//     const { peerConnection, remoteStream: rs } = initPeerConnection(localVideoRef, remoteVideoRef);
-//     setRemoteStream(rs);
+  const pc = new RTCPeerConnection();
+  pcRef.current = pc;
 
-//     const stream = await getMediaStream();
-//     setLocalStream(stream);
-//     addTracks();
+  // Remote stream for customer side (shows agent video)
+  const rs = new MediaStream();
+  setRemoteStream(rs);
 
-//     await setRemoteDescription(offer);
-//     const answer = await createAnswer();
+  pc.ontrack = (event) => {
+    console.log("📡 Customer received remote track");
+    event.streams[0].getTracks().forEach((track) => {
+      rs.addTrack(track);
+    });
+    setRemoteStream(rs);
+  };
 
-//     sendAnswer({ roomId, answer });
-//     setRoomId(roomId);
-//     setCallAccepted(true);
-//     setIncomingCall(null);
+  // ICE candidate handling
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      socketRef.current.emit("ice-candidate", { roomId, candidate: event.candidate });
+    }
+  };
 
-//     // ✅ Update backend that call was accepted
-//     try {
-//       await updateCallStatus({ roomId, status: "accepted" }).unwrap();
-//       console.log("✅ Call status updated to accepted");
-//     } catch (err) {
-//       console.error("❌ Failed to update call status:", err);
-//     }
-//   };
+  // ✅ Get customer’s own camera/mic
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  setLocalStream(stream);
 
-//   const handleReject = () => {
-//     setIncomingCall(null);
-//   };
+  // ✅ Add tracks so the Agent receives them
+  stream.getTracks().forEach((track) => pc.addTrack(track, stream));
 
-//   const handleEndCall = async () => {
-//     setCallAccepted(false);
-//     setRoomId(null);
+  // ✅ Apply Agent's offer
+  await pc.setRemoteDescription(new RTCSessionDescription(offer));
 
-//     if (localStream) {
-//       localStream.getTracks().forEach((track) => track.stop());
-//     }
+  // ✅ Create & send answer
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  sendAnswer({ roomId, answer });
 
-//     try {
-//       if (roomId) {
-//         await updateCallStatus({ roomId, status: "ended" }).unwrap();
-//         console.log("📴 Call ended");
-//       }
-//     } catch (err) {
-//       console.error("❌ Failed to update call status on end:", err);
-//     }
+  setRoomId(roomId);
+  setCallAccepted(true);
+  setIncomingCall(null);
+};
 
-//     setLocalStream(null);
-//     setRemoteStream(null);
-//   };
+
+  // ❌ Reject call
+  const handleReject = () => {
+    setIncomingCall(null);
+  };
+
+  // 📴 End call
+  const handleEndCall = () => {
+    setCallAccepted(false);
+    setRoomId(null);
+
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop());
+    }
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+    }
+    if (pcRef.current) {
+      pcRef.current.close();
+      pcRef.current = null;
+    }
+
+    setLocalStream(null);
+    setRemoteStream(null);
+  };
+
+  console.log("CustomerDashboard rendered with state:",incomingCall);
 
   return (
     <>
-      {/* <IncomingCallDialog
-        open={!!incomingCall}
-        callerName="Agent"
-        onAccept={handleAccept}
-        onReject={handleReject}
-      /> */}
+     <IncomingCallModal
+  open={!!incomingCall}
+  callerName="Agent"
+  onAccept={handleAccept}
+  onReject={handleReject}
+/>
 
       <VideoCallModal
-        // open={callAccepted}
-        // onEnd={handleEndCall}
-        // localStream={localStream}
-        // remoteStream={remoteStream}
-        // callAccepted={true}
-        // roomId={roomId}
+        open={callAccepted}
+        onEnd={handleEndCall}
+        localStream={localStream}
+        remoteStream={remoteStream}
+        callAccepted={true}
+        roomId={roomId}
       />
     </>
   );

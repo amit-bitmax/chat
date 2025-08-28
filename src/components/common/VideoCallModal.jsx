@@ -52,6 +52,72 @@ const   VideoCallModal = ({
   //   }
   // }, [localStream, remoteStream]);
 
+// useEffect(() => {
+//   if (localStream && localVideoRef.current) {
+//     localVideoRef.current.srcObject = localStream;
+//      localVideoRef.current.muted = true; // 👈 must mute to autoplay
+//     localVideoRef.current.play().catch((err) => {
+//       console.warn("Local video play blocked:", err);
+//     });
+//   }else {
+//     console.log("No local stream or video ref");
+//   }
+//   if (remoteStream && remoteVideoRef.current) {
+//     remoteVideoRef.current.srcObject = remoteStream;
+//   }else {
+//     console.log("No remote stream or video ref");
+//   }
+// }, [localStream, remoteStream]);
+
+useEffect(() => {
+  // if (localStream && localVideoRef.current && localVideoRef.current.srcObject !== localStream) {
+  //   localVideoRef.current.srcObject = localStream;
+  //   localVideoRef.current.muted = true;
+  //   localVideoRef.current.play().catch(() => {});
+  // }
+
+   if (localStream && localVideoRef.current) {
+    const videoEl = localVideoRef.current;
+
+    if (videoEl.srcObject !== localStream) {
+      videoEl.srcObject = localStream;
+    }
+
+
+     videoEl.muted = true;       // must mute for autoplay
+    videoEl.playsInline = true; // needed for iOS
+    videoEl.autoplay = true;
+
+    const playPromise = videoEl.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn("⚠️ Local video autoplay prevented:", err);
+      });
+    }
+  }
+}, [localStream]);
+
+useEffect(() => {
+  if (remoteStream && remoteVideoRef.current) {
+    const videoEl = remoteVideoRef.current;
+    if (videoEl.srcObject !== remoteStream) {
+      videoEl.srcObject = remoteStream;
+    }
+    videoEl.playsInline = true; // needed for iOS
+    videoEl.autoplay = true;
+
+     const playPromise = videoEl.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn("⚠️ Remote video autoplay prevented:", err);
+      });
+    }
+  }
+}, [remoteStream]);
+
+console.log("localStream", localStream);
+console.log("remoteStream", remoteStream);
+
   useEffect(() => {
     if (open && callAccepted) {
       timerRef.current = setInterval(() => {
@@ -76,25 +142,53 @@ const   VideoCallModal = ({
   };
 
 
-  const handleEnd = async () => {
-    console.log("Call ended");
-    clearInterval(timerRef.current);
-    closeConnection();
-    console.log("Call ended",roomId);
-    try {
-      if (roomId) {
-        socket.emit("call:end", { roomId }); // notify server
-        socket.disconnect();
-        await updateCallStatus({ roomId: roomId , status: "ended" }); // ✅ API call
-        toast.success("Call ended");
-        console.log("✅ Call status updated to 'ended'", roomId);
-      }
-    } catch (err) {
-      console.error("❌ Failed to update call status:", err);
-    }
+  // const handleEnd = async () => {
+  //   console.log("Call ended");
+  //   clearInterval(timerRef.current);
+  //   closeConnection();
+  //   console.log("Call ended",roomId);
+  //   try {
+  //     if (roomId) {
+  //       socket.emit("call:end", { roomId }); // notify server
+  //       socket.disconnect();
+  //       await updateCallStatus({ roomId: roomId , status: "ended" }); // ✅ API call
+  //       toast.success("Call ended");
+  //       console.log("✅ Call status updated to 'ended'", roomId);
+  //     }
+  //   } catch (err) {
+  //     console.error("❌ Failed to update call status:", err);
+  //   }
 
-    onEnd(); // cleanup from parent
-  };
+  //   onEnd(); // cleanup from parent
+  // };
+
+  const handleEnd = async () => {
+  console.log("Call ended");
+  clearInterval(timerRef.current);
+
+  // ✅ stop all local tracks
+  localStream?.getTracks().forEach(track => track.stop());
+
+  // ✅ stop all remote tracks
+  remoteStream?.getTracks().forEach(track => track.stop());
+
+  // ✅ close peer connection if you keep one in ref
+  // peerConnectionRef.current?.close();
+  // peerConnectionRef.current = null;
+
+  try {
+    if (roomId) {
+      socket.emit("call:end", { roomId }); // notify server
+      socket.disconnect();
+      await updateCallStatus({ roomId: roomId, status: "ended" }); 
+      toast.success("Call ended");
+    }
+  } catch (err) {
+    console.error("❌ Failed to update call status:", err);
+  }
+
+  onEnd?.(); // cleanup from parent
+};
 
 
   const toggleMute = () => {
@@ -174,8 +268,8 @@ const   VideoCallModal = ({
               ref={localVideoRef}
               autoPlay
               playsInline
-              muted
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              muted       // 👈 very important
+              style={{ width: "100%", height: "100%", objectFit: "cover", background: "black" }}
             />
             <Typography
               variant="caption"

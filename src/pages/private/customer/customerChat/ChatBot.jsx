@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Paper,
   Grid,
@@ -9,12 +9,20 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   TextField,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { Forum, Email, Call, Send } from "@mui/icons-material";
 import { useGetConversationQuery, useSendMessageMutation } from "../../../../features/chat/chatApi";
-// import { getSockets } from "../../sockets/messageSocket";
 import { toast } from "react-toastify";
+
+import {
+  initSocket,
+  joinUserRoom,
+  onIncomingCall,
+  acceptCall,
+  endCall,
+} from "../../../../sockets/callSocket";
+
 import VideoCallModal from "../../../../components/common/VideoCallModal";
 import MessageList from "../customerChat/messages/MessageList";
 import CallList from "../CallList";
@@ -23,21 +31,41 @@ import ChatWindow from "./ChatWindow";
 export default function ChatBot({ currentUserId }) {
   const [value, setValue] = useState(0);
   const [openModal, setOpenModal] = useState(false);
-  const [targetUserId, setTargetUserId] = useState("687608347057ea1dfefa7de0"); // For now, hardcoded for testing
+  const [targetUserId, setTargetUserId] = useState(null);
   const [text, setText] = useState("");
   const [liveMessages, setLiveMessages] = useState([]);
 
+  // NEW STATES for calls
+  const [callAccepted, setCallAccepted] = useState(false);
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+
   const { data: messagesData, isLoading: loadingMessages } = useGetConversationQuery();
-  console.log("messagesData", messagesData);
   const [sendMessage] = useSendMessageMutation();
 
-  // const handleTyping = (val) => {
-  //   const { presenceSocket } = getSockets();
-  //   if (presenceSocket && targetUserId) {
-  //     presenceSocket.emit(val ? "start-typing" : "stop-typing", { toUserId: targetUserId });
-  //   }
-  // };
+  // ✅ Setup socket once
+  useEffect(() => {
+    const token = localStorage.getItem("Token");
+    const socket = initSocket(token);
 
+    if (currentUserId) {
+      joinUserRoom(currentUserId);
+    }
+
+    // listen for incoming call
+    onIncomingCall((data) => {
+      console.log("📞 Incoming call:", data);
+      setTargetUserId(data.from);
+      setOpenModal(true);
+      setCallAccepted(false);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [currentUserId]);
+
+  // send message
   const handleSend = async () => {
     if (!text.trim()) {
       toast.error("Please enter a message");
@@ -48,7 +76,6 @@ export default function ChatBot({ currentUserId }) {
       return;
     }
 
-    const { chatSocket } = getSockets();
     const roomId = [currentUserId, targetUserId].sort().join("_");
     const newMessage = {
       from: currentUserId,
@@ -56,11 +83,6 @@ export default function ChatBot({ currentUserId }) {
       message: text.trim(),
       createdAt: new Date().toISOString(),
     };
-
-    // Emit to socket
-    if (chatSocket) {
-      chatSocket.emit("sendMessage", { roomId:"123", message: newMessage });
-    }
 
     // Optimistic UI
     setLiveMessages((prev) => [...prev, newMessage]);
@@ -77,7 +99,7 @@ export default function ChatBot({ currentUserId }) {
 
   return (
     <Grid container>
-      <Grid size={{xs:12}}>
+      <Grid xs={12}>
         <Paper
           elevation={1}
           sx={{
@@ -86,7 +108,7 @@ export default function ChatBot({ currentUserId }) {
             height: "70vh",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           {/* Header */}
@@ -112,27 +134,26 @@ export default function ChatBot({ currentUserId }) {
           <Box sx={{ flex: 1, height: "100%" }}>
             {value === 0 && (
               <>
-                <Stack sx={{ height: "90%", 
-                overflow: "scroll",
-                "&::-webkit-scrollbar": {
-                    display: "none",
-                        } 
-                  }}>
+                <Stack
+                  sx={{
+                    height: "90%",
+                    overflow: "scroll",
+                    "&::-webkit-scrollbar": { display: "none" },
+                  }}
+                >
                   <MessageList
-                  messages={[...(messagesData?.data || []), ...liveMessages]}
-                  loading={loadingMessages}
-                  currentUserId={currentUserId}
-                />
+                    messages={[...(messagesData?.data || []), ...liveMessages]}
+                    loading={loadingMessages}
+                    currentUserId={currentUserId}
+                  />
                 </Stack>
                 <Stack
                   direction="row"
                   alignItems="center"
                   sx={{
-                    // m: 1,
                     px: 0.5,
                     background: "#fff",
-                    // borderRadius: "20px",
-                    borderTop: "1px solid #eee"
+                    borderTop: "1px solid #eee",
                   }}
                   spacing={1}
                 >
@@ -140,14 +161,11 @@ export default function ChatBot({ currentUserId }) {
                     fullWidth
                     size="small"
                     value={text}
-                    onChange={(e) => {
-                      setText(e.target.value);
-                      handleTyping(e.target.value);
-                    }}
+                    onChange={(e) => setText(e.target.value)}
                     placeholder="Type your message"
                   />
-                  <IconButton onClick={handleSend} disabled={!text.trim()} >
-                    <Send />  
+                  <IconButton onClick={handleSend} disabled={!text.trim()}>
+                    <Send />
                   </IconButton>
                 </Stack>
               </>
@@ -175,13 +193,13 @@ export default function ChatBot({ currentUserId }) {
                 flexDirection: "row",
                 gap: 1,
                 justifyContent: "center",
-                padding: "10px"
+                padding: "10px",
               },
               "& .MuiBottomNavigationAction-label": {
                 fontSize: "10px",
-                marginRight: "10px"
+                marginRight: "10px",
               },
-              bgcolor:" rgba(239, 120, 60, 0.3)"
+              bgcolor: " rgba(239, 120, 60, 0.3)",
             }}
             value={value}
             onChange={(e, nv) => setValue(nv)}
@@ -195,10 +213,23 @@ export default function ChatBot({ currentUserId }) {
           {openModal && (
             <VideoCallModal
               open={openModal}
-              onClose={() => setOpenModal(false)}
-              // roomId={`room-${currentUserId}-${targetUserId}`}
-              // callerId={currentUserId}
-              // receiverId={targetUserId}
+              incoming={!callAccepted}
+              callAccepted={callAccepted}
+              localStream={localStream}
+              remoteStream={remoteStream}
+              onAccept={() => {
+                acceptCall({ from: targetUserId, to: currentUserId });
+                setCallAccepted(true);
+              }}
+              onReject={() => {
+                endCall({ from: targetUserId, to: currentUserId, reason: "rejected" });
+                setOpenModal(false);
+              }}
+              onEnd={() => {
+                endCall({ from: targetUserId, to: currentUserId });
+                setOpenModal(false);
+                setCallAccepted(false);
+              }}
             />
           )}
         </Paper>

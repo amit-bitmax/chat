@@ -4,7 +4,7 @@ import Game from './home/Game'
 const Dashboard = () => {
   return (
     <>
-    <Game/>
+    Dashboard
     </>
   )
 }

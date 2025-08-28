@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Skeleton } from "@mui/material";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
@@ -144,7 +144,10 @@ export default function MessageList({ currentUserId }) {
         }}
       >
         {isLoading ? (
-          <Typography>Loading...</Typography>
+           <>
+                <Skeleton variant="text" width={  60} height={20} />
+                {/* <Skeleton variant="circular" width={20} height={20} /> */}
+              </>
         ) : combinedMessages.length > 0 ? (
           combinedMessages.map((msg, index) => {
             const messageDate = dayjs(msg.createdAt).format("YYYY-MM-DD");
