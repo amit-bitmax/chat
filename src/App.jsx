@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import MainRoutes from "./routes/MainRoutes";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import AppTheme from "./theme/AppTheme";
+import { connectSocket } from "./hooks/socket";
 // Context to toggle light/dark mode
 export const ColorModeContext = createContext();
 
@@ -25,6 +26,9 @@ const App = () => {
     []
   );
   const theme = useMemo(() => AppTheme(mode), [mode]);
+    useEffect(() => {
+    connectSocket(); // ✅ yahan socket initialize hoga app ke mount hote hi
+  }, []);
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>

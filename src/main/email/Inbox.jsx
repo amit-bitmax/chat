@@ -8,10 +8,10 @@ import {
 import { Search, Star, StarBorder, Reply, Remove } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useNavigate } from 'react-router-dom';
-import Paginations from '../../components/common/public/Paginations';
-import TicketModal from './TicketModel';
 import { useGetAgentTicketsQuery, useReplyToTicketMutation } from '../../features/ticket/ticketApi';
 import renderTime from '../../utils/renderTime';
+import Paginations from '../../components/common/Paginations';
+import InboxModal from './InboxModal';
 
 const tableHeaders = ['Star', 'Customer', 'Subject', 'Status', 'Last Activity', 'Action'];
 const statusOptions = ['All', 'Open', 'In Progress', 'Escalated', 'Resolved'];
@@ -236,7 +236,7 @@ const Ticket = () => {
       </Paper>
 
       {modalType === 'reply' && replyingTo && (
-        <TicketModal
+        <InboxModal
           open={open}
           handleClose={() => setOpen(false)}
           title={`Reply to ${replyingTo.subject}`}

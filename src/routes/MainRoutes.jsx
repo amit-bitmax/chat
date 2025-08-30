@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import Chat from "../main/chat/Chat";
+import InboxDetail from "../main/email/InboxDetail";
+
 
 // ✅ Lazy load pages
 const Login = lazy(() => import("../pages/public/Login"));
@@ -8,7 +9,8 @@ const AdminDashboard = lazy(() => import("../pages/private/admin/AdminDashboard"
 const AgentDashboard = lazy(() => import("../pages/private/agent/Dashboard"));
 const QaDashboard = lazy(() => import("../pages/private/qa/QaDashboard"));
 const Home = lazy(() => import("../pages/private/customer/Home"));
-
+const Inbox = lazy(() => import("../main/email/Inbox"));
+const Chat = lazy(() => import("../main/chat/Chat"));
 // ✅ Lazy load routers
 const PublicRouter = lazy(() => import("./router/PublicRouter"));
 const ProtectedRouter = lazy(() => import("./router/ProtectedRouter"));
@@ -23,7 +25,8 @@ const qaChildren = [
 const agentChildren = [
   {path:"dashboard", index: true, element: <AgentDashboard /> },
   { path: "chat", element: <Chat /> }, 
-  // { path: "inbox", element: <Inbox /> },
+  { path: "inbox", element: <Inbox /> },
+  { path: "inbox/:ticketId", element: <InboxDetail /> },
   // { path: "analytics/customers", element: <Customers /> }, 
   // { path: "reports/performance", element: <Performance /> }, 
   // { path: "reports/activity", element: <Activity /> }, 

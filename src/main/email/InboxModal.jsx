@@ -28,7 +28,7 @@ const FormField = ({ formik, name, label }) => (
   />
 );
 
-const TicketModal = ({ open, handleClose, initialValues, onSubmit }) => {
+const InboxModal = ({ open, handleClose, initialValues, onSubmit }) => {
   const [previewImage, setPreviewImage] = useState("");
 
   const formik = useFormik({
@@ -130,4 +130,4 @@ const TicketModal = ({ open, handleClose, initialValues, onSubmit }) => {
   );
 };
 
-export default TicketModal;
+export default InboxModal;

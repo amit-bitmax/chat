@@ -62,7 +62,7 @@ const ProfileCard = ({ agent, onToggle }) => {
   };
 
   return (
-    <Card variant="outlined" sx={{ p: 2, border: 'none', width: 260 }}>
+    <Card elevation={0} variant="outlined" sx={{ p: 2, border: 'none', width: 260 }}>
       <Stack spacing={2} direction="row" alignItems="center">
         <StyledBadge
           overlap="circular"

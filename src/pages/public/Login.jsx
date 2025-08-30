@@ -14,7 +14,7 @@ import {
 } from '@mui/icons-material';
 
 import { useLoginUserMutation } from '../../features/auth/authApi';
-import { connectSocket } from '../../sockets/sockets';
+import { connectSocket } from '../../hooks/socket';
 
 import VD1 from '../../assets/videos/SecureLogin.mp4';
 const Login = () => {

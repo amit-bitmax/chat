@@ -4,8 +4,6 @@ import {
   AppBar as MuiAppBar,
   Box,
   Toolbar,
-  CssBaseline,
-  Typography,
   IconButton,
   Menu,
   Avatar,
@@ -23,16 +21,16 @@ import ProfileCard from "../common/ProfileCard";
 import { ColorModeContext } from "../../App";
 import { useGetProfileQuery } from "../../features/auth/authApi";
 import StyledBadge from "../common/StyledBadge";
-// import Notifications from "../common/Notifications";
+import Notification from "../common/Notification";
 
-const drawerWidth = 180;
+const drawerWidth = 200;
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
   ...(open && {
-    marginLeft: drawerWidth,
+    marginLeft: `-${drawerWidth}px`,
     width: `calc(100% - ${drawerWidth}px)`,
   }),
 }));
@@ -54,19 +52,18 @@ console.log("role",role);
   const handleDrawerToggle = () => setOpen((prev) => !prev);
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" elevation={0} open={open} sx={{ background: "#ebececf4" }}>
+    <Box sx={{ display: "flex"}}>
+      <AppBar elevation={0} position="fixed" open={open} sx={{borderBottom:'1px solid #ffffff1a', background: "none" }}>
         <Toolbar>
           <IconButton
             size="small"
             onClick={handleDrawerToggle}
             edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
+            sx={{mr:2,...(open && { display: "none" }) }}
           >
-            <MenuIcon sx={{ color: "#665b41ff" }} />
+            <MenuIcon sx={{ color: "#062111ff" }} />
           </IconButton>
-          <Typography variant="h6">{role} Panel</Typography>
+          {/* <Typography variant="h6">{role} Panel</Typography> */}
           <Box sx={{ flexGrow: 1 }} />
           <Stack direction="row" alignItems="center" spacing={1}>
             <IconButton onClick={colorMode.toggleColorMode}>
@@ -100,12 +97,13 @@ console.log("role",role);
         component="main"
         sx={{
           flexGrow: 1,
-          p: 2,
+          p: 1,
           pt: 8,
-          // backgroundImage: "linear-gradient(135deg, rgba(247, 251, 248, 0.74), rgba(222,118,49,0.3), rgba(43,57,119,0.3), rgba(121,40,119,0.7))",
+          backgroundColor:'transparent',
+          backgroundImage: "linear-gradient(135deg, rgba(247, 251, 248, 0.14),rgba(247, 251, 248, 0.74))",
           backdropFilter: "blur(10px)",
           height:'100vh',
-          width: open ? `calc(99.2vw - ${drawerWidth}px)` : "94.2vw",
+          width: open ? `calc(100vw - ${drawerWidth}px)` : "94.2vw",
         }}
       >
         {children}
@@ -113,6 +111,7 @@ console.log("role",role);
 
       {/* Profile Menu */}
       <Menu
+      elevation={0}
         sx={{ mt: 1.5 }}
         anchorEl={profileAnchorEl}
         open={Boolean(profileAnchorEl)}
@@ -128,7 +127,7 @@ console.log("role",role);
         open={Boolean(notifAnchorEl)}
         onClose={() => setNotifAnchorEl(null)}
       >
-        {/* <Notifications /> */}
+        <Notification />
       </Menu>
     </Box>
   );

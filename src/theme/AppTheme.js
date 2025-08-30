@@ -28,12 +28,12 @@ const AppTheme = (mode = 'light') => createTheme({
     palette: {
         mode,
         background: {
-            default: mode === 'dark' ? '#121212' : '#fff',
-            paper: mode === 'dark' ? '#1e1e1e' : '#271e1eff',
+            default: mode === 'dark' ? '#0b261aff' : '#0b261aff',
+            paper: mode === 'dark' ? '#1e1e1e' : '#ac7070ff',
         },
         ...(mode === 'dark' && {
             text: {
-                primary: '#260b0bff',
+                primary: '#0b261aff',
                 secondary: '#ffffffff'
             }
         }),

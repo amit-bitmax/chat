@@ -55,9 +55,9 @@ export const menuData = {
             {
                 name: "Chat", icon: Forum,route:"chat",
             },
-            // {
-            //     name: "Inbox", icon: Inbox,route:"inbox",
-            // },
+            {
+                name: "Inbox", icon: Inbox,route:"inbox",
+            },
             // {
             //     name: "Reports", icon: SignalCellularAlt,
             //     subMenu: [

@@ -1,4 +1,4 @@
-// src/pages/Tickets/TicketDetail.jsx
+// src/pages/Tickets/InboxDetail.jsx
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -28,7 +28,8 @@ import {
 import { useGetTicketIdQuery, useReplyToTicketMutation } from '../../features/ticket/ticketApi';
 import renderTime from '../../utils/renderTime';
 
-const TicketDetail = () => {
+
+const InboxDetail = () => {
   const { ticketId } = useParams();
   const navigate = useNavigate();
   const [replyContent, setReplyContent] = useState('');
@@ -315,4 +316,4 @@ function stringToColor(string) {
   return color;
 }
 
-export default TicketDetail;
+export default InboxDetail;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import {  Box, Collapse, Typography, IconButton, Divider, List, ListItem, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight,  ExpandMore } from '@mui/icons-material';
 
 import { menuData } from './menuData';
@@ -91,11 +91,11 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
             const isActive = activeItem === item.name;
             return (
                 <React.Fragment key={item.name}>
-                    <ListItem disablePadding sx={{ display: 'flex',background:isActive? "#eceff1":"none",  pl: level * 0 }}>
+                    <ListItem disablePadding sx={{ display: 'flex',background:isActive? "none":"none",  pl: level * 0 }}>
                         {/* Left border indicator */}
                         <Box
                             sx={{
-                                background: isActive ?  ' #455a64':'none' ,
+                                background: isActive ?  '#4b7b71ff':'none' ,
                                 borderRadius: '50px',
                                 height: '20px',
                                 ml:0.5,
@@ -107,7 +107,7 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
                             sx={{
                                 my: 0.2,
                                 mr:1,
-                                background: isActive ? 'rgba(255, 255, 255, 0.68)' : 'none',
+                                background: isActive ? '#ffffffe6' : 'none',
                                 borderRadius: '5px 5px 5px 5px',
                                 width: '100%',
                             }}
@@ -115,7 +115,7 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
                             <ListItemButton
                                 sx={{
                                     justifyContent: open ? 'initial' : 'center',
-                                    color: isActive ? '#455a64' : '#333',
+                                    color: isActive ? '#0b261aff' : '#e4dbdbff',
                                 }}
                                 onClick={() => {
                                     if (item?.route) {
@@ -161,16 +161,16 @@ const Sidebar = ({ open, handleDrawerClose,role }) => {
 
     return (
         <Drawer variant="permanent" open={open} >
-            <DrawerHeader open={open} sx={{background:'#ebececf4'}}>
-                <Typography textAlign={'center'} sx={{ p: 1.5 }} variant="h6" noWrap component="div">
+            <DrawerHeader open={open}>
+                <Typography textAlign={'center'}  variant="h6" noWrap component="div">
                     Live Chats
                 </Typography>
-                <IconButton variant="none" onClick={handleDrawerClose} sx={{ '&:hover': { background: 'none' }, color: '#827717' }}>
+                <IconButton variant="none" onClick={handleDrawerClose} sx={{ '&:hover': { background: 'none' },mr:2, color: '#041f0bff' }}>
                     {theme.direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
                 </IconButton>
             </DrawerHeader>
             <Divider />
-            <Box sx={{background:'#ebececf4',height:'100%'}}>
+            <Box sx={{background:'none',height:'100%'}}>
                 <List>
                     {menuData[role]?.map((section) => (
                         <React.Fragment key={section.label}>
