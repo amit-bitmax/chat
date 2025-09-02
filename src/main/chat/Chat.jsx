@@ -117,7 +117,7 @@ const Chat = ({ currentUserId }) => {
     <>
       <Grid container spacing={1}>
         {/* Left Panel */}
-        <Grid size={{xs:12,lg:3,sm:6,md:6}}>
+        <Grid size={{ xs: 12, lg: 3, sm: 6, md: 6 }}>
           <Card sx={{ p: 2 }}>
             <OutlinedInput
               startAdornment={<InputAdornment position="start"><Search /></InputAdornment>}
@@ -126,12 +126,12 @@ const Chat = ({ currentUserId }) => {
               placeholder="Search..."
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Tabs value={tab} onChange={(e, val) => setTab(val)} sx={{ mb: 1 }}>
-              <Tab label="Messages" />
-              <Tab label="Active" />
-              <Tab label="Calls" />
+            <Tabs value={tab} onChange={(e, val) => setTab(val)} sx={{ my: 1 }}>
+              <Tab sx={{ minWidth: 75 }} label="Messages" />
+              <Tab sx={{ minWidth: 75 }} label="Active" />
+              <Tab sx={{ minWidth: 75 }} label="Calls" />
             </Tabs>
-            <Box sx={{ height: { xs: '100vh', lg: "70vh" }, overflowY: "auto" }}>
+               <Box sx={{ height: { xs: '100vh', lg: "70vh" }, scrollbarWidth: 'none', "&::-webkit-scrollbar": { display: 'none' }, overflowY: "auto", }}>
               {tab === 2 ? (
                 loadingCalls ? (
                   <CircularProgress />
@@ -157,14 +157,14 @@ const Chat = ({ currentUserId }) => {
                 )
               ) : (
                 filteredCustomers.map((user) => (
-                  <Box key={user._id} sx={{ p: 1,backgroundColor: "#ebececf4", borderRadius: 1 ,cursor: "pointer" }} onClick={() => setSelectedUser(user)}>
+                  <Box key={user._id} sx={{ p: 1, backgroundColor: "#ebececf4", borderRadius: 1, cursor: "pointer" }} onClick={() => setSelectedUser(user)}>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <StyledBadge
                         overlap="circular"
                         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                         variant={user?.is_active ? "dot" : "none"}
                       >
-                        <Avatar sx={{border: "1px solid #041c0dff"}} src={`${IMG_BASE_URL}/${user.profileImage}`} />
+                        <Avatar sx={{ border: "1px solid #041c0dff" }} src={`${IMG_BASE_URL}/${user.profileImage}`} />
                       </StyledBadge>
                       <Typography>{user.name}</Typography>
                     </Stack>
@@ -176,8 +176,8 @@ const Chat = ({ currentUserId }) => {
         </Grid>
 
         {/* Right Panel */}
-        <Grid size={{xs:12,lg:6,sm:6,md:6}}>
-          <Card elevation={0} sx={{ width: '100%',height:'100%', overflow: 'visible' }}>
+        <Grid size={{ xs: 12, lg: 6, sm: 6, md: 6 }}>
+          <Card elevation={0} sx={{ width: '100%', height: '100%', overflow: 'visible' }}>
             {selectedUser && tab !== 2 ? (
               <Box>
                 {/* Header */}
@@ -194,51 +194,128 @@ const Chat = ({ currentUserId }) => {
                     </Box>
                   </Stack>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <IconButton size="small" 
+                    <IconButton size="small"
                     // onClick={() => startCall(selectedUser._id)}
                     >
                       <Call />
                     </IconButton>
-                    <IconButton size="small" 
+                    <IconButton size="small"
                     // onClick={() => startCall(selectedUser._id)}
-                      >
+                    >
                       <Videocam />
                     </IconButton>
                   </Box>
                 </Stack>
+                <Box sx={{ position: "relative", mb: 3, height: { xs: "250px", lg: "350px" } }}>
+                  {/* Fixed Current Date Header */}
+                  {currentDate && (
+                    <Box
+                      sx={{
+                        position: "sticky",
+                        top: 0,
+                        zIndex: 20,
+                        textAlign: "center",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          backgroundColor: "#e0e0e0",
+                          padding: "2px 10px",
+                          borderRadius: "12px",
+                          fontSize: "12px",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                          display: "inline-block",
+                          mt: 1
+                        }}
+                      >
+                        {dayjs(currentDate).isSame(dayjs(), "day")
+                          ? "Today"
+                          : dayjs(currentDate).isSame(dayjs().subtract(1, "day"), "day")
+                            ? "Yesterday"
+                            : dayjs(currentDate).format("DD MMM YYYY")}
+                      </Typography>
+                    </Box>
+                  )}
 
-                {/* Messages */}
-                <Box ref={containerRef} sx={{ height: "400px", overflowY: "auto", p: 1 }}>
-                  {loadingMessages ? (
-                    <ChatSkeleton />
-                  ) : combinedMessages.length > 0 ? (
-                    combinedMessages.map((msg, index) => {
-                      const messageDate = dayjs(msg.createdAt).format("YYYY-MM-DD");
-                      return (
-                        <Box key={msg._id || `temp-${index}`} data-date={messageDate}>
-                          <ChatMessage msg={msg} selectedUser={selectedUser} />
-                        </Box>
-                      );
-                    })
+                  {/* Scrollable Messages */}
+                  <Box
+                    ref={containerRef}
+                    sx={{
+                      overflowY: "auto",
+                      p: 1,
+                      height: "100%",
+                      background: "none",
+                      "&::-webkit-scrollbar": { display: "none" },
+                    }}
+                  >
+                    {loadingMessages ? (
+                      <ChatSkeleton />
+                    ) : combinedMessages.length > 0 ? (
+                      combinedMessages.map((msg, index) => {
+                        const messageDate = dayjs(msg.createdAt).format("YYYY-MM-DD");
+                        return (
+                          <Box key={msg._id || `temp-${index}`} data-date={messageDate}>
+                            <ChatMessage key={msg._id} msg={msg} selectedUser={selectedUser} />
+                          </Box>
+                        );
+                      })
+                    ) : (
+                      <Typography>No messages found</Typography>
+                    )}
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    border: "1px solid #ddd",
+                    mb: 1,
+                    borderRadius: 2,
+                    mx: 1,
+                    backgroundColor: "#f8fbfcd1",
+                  }}
+                >
+                  {isReply ? (
+                    // ✅ Reply Box
+                    <Stack
+                      direction="column"
+                      alignItems="flex-start"
+                      sx={{
+                        border: "1px solid #f9f5f5ff",
+                        borderRadius: 2,
+                        backgroundColor: "#ddd9d9d1",
+                        m: 0.75,
+                        p: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: "bold", color: "secondary.main", fontSize: "12px" }}
+                      >
+                        {selectedUser?.name}
+                      </Typography>
+                      <Typography variant="body1">
+                        <span>hey this dummy message</span>
+                      </Typography>
+                    </Stack>
                   ) : (
-                    <Typography>No messages found</Typography>
+                    // ✅ Normal Message Box
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <TextField
+                        sx={{ flex: 1 }}
+                        fullWidth
+                        size="small"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Type your message"
+                      />
+                      <IconButton onClick={handleSend}>
+                        <Send />
+                      </IconButton>
+                    </Stack>
                   )}
                 </Box>
 
-                {/* Input */}
-                <Box sx={{ border: "1px solid #ddd", borderRadius: 2, mx: 1, backgroundColor: "#f8fbfcd1" }}>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <TextField
-                      sx={{ flex: 1 }}
-                      fullWidth
-                      size="small"
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      placeholder="Type your message"
-                    />
-                    <IconButton onClick={handleSend}><Send /></IconButton>
-                  </Stack>
-                </Box>
               </Box>
             ) : (
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
@@ -248,7 +325,7 @@ const Chat = ({ currentUserId }) => {
           </Card>
         </Grid>
 
-        <Grid size={{xs:12,lg:3,sm:6,md:6}}>
+        <Grid size={{ xs: 12, lg: 3, sm: 6, md: 6 }}>
           <Profile />
         </Grid>
       </Grid>

@@ -185,25 +185,25 @@ const AppTheme = (mode = 'light') => createTheme({
             },
         },
         MuiPaper: {
-        styleOverrides: {
-            root: {
-            background: 'rgba(255, 255, 255, 0.2)', 
-            // boxShadow:'0 4px 30px rgba(0, 0, 0, 0.1)',
-            backdropFilter: 'blur(5px)',
-            WebkitBackdropFilter: 'blur(5px)', 
-            border: '1px solid rgba(255, 255, 255, 0.1))', 
+            styleOverrides: {
+                root: {
+                    background: 'rgba(255, 255, 255, 0.2)',
+                    // boxShadow:'0 4px 30px rgba(0, 0, 0, 0.1)',
+                    backdropFilter: 'blur(5px)',
+                    WebkitBackdropFilter: 'blur(5px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1))',
+                },
             },
-        },
         },
         MuiCard: {
-        styleOverrides: {
-            root: {
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(5px)',
-            WebkitBackdropFilter: 'blur(5px)',
-            border: '1px solid rgba(191, 162, 162, 0.3)',
+            styleOverrides: {
+                root: {
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(5px)',
+                    WebkitBackdropFilter: 'blur(5px)',
+                    border: '1px solid rgba(191, 162, 162, 0.3)',
+                },
             },
-        },
         },
         MuiTableCell: {
             styleOverrides: {
@@ -248,39 +248,39 @@ const AppTheme = (mode = 'light') => createTheme({
         },
 
         MuiTabs: {
-        styleOverrides: {
-            root: {
-            minHeight: 25,
-            height: 35,
-            padding: 0,
-            fontSize: '15px',
-            },
-            indicator: {
-            height: 2, 
+            styleOverrides: {
+                root: {
+                    minHeight: 25,
+                    height: 35,
+                    padding: 0,
+                    fontSize: '15px',
+                },
+                indicator: {
+                    height: 2,
+                }
             }
-        }
         },
         MuiTab: {
-        styleOverrides: {
-            root: {
-            width:'50px',
-            minHeight: 25,
-            height: 35,
-            padding: '0 8px',
-            fontSize: '10px',
-            fontWeight: 'bold',
-            textTransform: 'none',
-            border: 'none',
-            outline: 'none',
-            '&:focus': {
-                outline: 'none',
-            },
-            '&:focus-visible': {
-                outline: 'none',
-                boxShadow: 'none',
+            styleOverrides: {
+                root: {
+                    // width: '50px',
+                    minHeight: 25,
+                    height: 35,
+                    padding: '0 8px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    border: 'none',
+                    outline: 'none',
+                    '&:focus': {
+                        outline: 'none',
+                    },
+                    '&:focus-visible': {
+                        outline: 'none',
+                        boxShadow: 'none',
+                    }
+                }
             }
-            }
-        }
         },
 
         MuiTablePagination: {

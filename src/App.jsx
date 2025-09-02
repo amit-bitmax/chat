@@ -33,7 +33,7 @@ const App = () => {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline/>
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="top-center" autoClose={3000} />
         <MainRoutes />
       </ThemeProvider>
     </ColorModeContext.Provider>
